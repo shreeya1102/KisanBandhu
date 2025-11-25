@@ -10,4 +10,7 @@ joblib
 opencv-python-headless
 soundfile
 TTS
+<<<<<<< HEAD
 coqui
+=======
+>>>>>>> bfac4f6ce62b3fc31e7900219764c79e297899b9
