@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>KisanBandhu – Final</title>
+<style>
+  body{font-family:Arial;text-align:center;padding:60px;background:#e8f5e9}
+  button{padding:40px 80px;font-size:30px;background:#4CAF50;color:white;border-radius:50%;border:none;cursor:pointer}
+  button:active{background:#d32f2f}
+  #log{margin-top:40px;font-size:26px;min-height:60px}
+</style></head>
+<body>
+<h1>किसानबन्धु वॉइस असिस्टेंट</h1>
+<button id="mic">Hold & Speak in Hindi</button>
+<div id="log">Connecting...</div>
+
+<script>
+const log = document.getElementById("log");
+const ws = new WebSocket("ws://127.0.0.1:8000/");
+
+ws.onopen = () => log.innerHTML = "<span style='color:green'>जुड़ गया! बटन दबाकर बोलें</span>";
+ws.onclose = () => log.innerHTML = "<span style='color:red'>Server बंद है – फिर चालू करें</span>";
+
+ws.onmessage = (msg) => {
+  if (msg.data.startsWith("TEXT:")) log.innerText = "आप: " + msg.data.slice(5);
+  if (msg.data.startsWith("BOT:"))  log.innerText = "किसानबन्धु: " + msg.data.slice(4);
+  if (msg.data.startsWith("AUDIO:")) {
+    const audio = new Audio("data:audio/mpeg;base64," + msg.data.slice(6));
+    audio.volume = 1.0;
+    audio.play();
+    log.innerText = "बोल रहा हूँ...";
+  }
+};
+
+let recorder;
+document.getElementById("mic").onpointerdown = async () => {
+  const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+  recorder = new MediaRecorder(stream);
+  const chunks = [];
+  recorder.ondataavailable = e => chunks.push(e.data);
+  recorder.onstop = () => {
+    const blob = new Blob(chunks, {type:'audio/webm'});
+    const reader = new FileReader();
+    reader.onload = () => ws.send(reader.result.split(',')[1]);
+    reader.readAsDataURL(blob);
+  };
+  recorder.start();
+  log.innerText = "बोलिए... (छोड़ें जब खत्म हो)";
+};
+document.getElementById("mic").onpointerup = () => recorder && recorder.stop();
+</script>
+</body></html>

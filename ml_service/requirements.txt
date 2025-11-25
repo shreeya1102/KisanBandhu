@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+python-multipart
+numpy
+pillow
+openai-whisper
+sentence-transformers
+scikit-learn
+joblib
+opencv-python-headless
+soundfile
+TTS
+coqui
