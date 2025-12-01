@@ -1,0 +1,87 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f5132, #146c43);
+  font-family: 'Poppins', sans-serif;
+  padding: 40px 20px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 60px;
+}
+
+/* FORCE 2×2 GRID LIKE LUDO — ALWAYS! */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 300px 300px;   /* Exactly 2 columns */
+  grid-template-rows: 350px 350px;      /* Exactly 2 rows */
+  gap: 40px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Big beautiful cards — your exact size */
+.feature-card {
+  width: 300px;
+  height: 100px;
+  background: white;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.35);
+  transition: all 0.35s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.feature-card:hover {
+  transform: translateY(-16px) scale(1.05);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+
+/* Perfect circular image inside big card */
+.feature-card img {
+  width: 88%;
+  height: 88%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 8px solid #28a745;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover img {
+  border-color: #218838;
+}
+
+/* Mobile & Tablet — STILL 2×2 (scrollable if needed) */
+@media (max-width: 768px) {
+  .cards-grid {
+    grid-template-columns: 260px 260px;
+    grid-template-rows: 300px 300px;
+    gap: 30px;
+  }
+  .feature-card {
+    width: 260px;
+    height: 300px;
+  }
+  h1 { font-size: 28px; margin-bottom: 50px; }
+}
+
+@media (max-width: 580px) {
+  .cards-grid {
+    grid-template-columns: 220px 220px;
+    grid-template-rows: 270px 270px;
+    gap: 25px;
+  }
+  .feature-card {
+    width: 220px;
+    height: 270px;
+  }
+}

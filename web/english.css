@@ -1,0 +1,79 @@
+/* Full-screen background with fresh farm gradient */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', 'Hind Siliguri', sans-serif;
+}
+
+body {
+    background: linear-gradient(to bottom, #0f5132, #146c43);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 40px;               /* Space from bottom */
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Modern Next Button – Always Bottom Center */
+#form {
+    position: fixed;
+    bottom: 25px;                       /* Distance from bottom */
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 16px 50px;                 /* Big touch area for mobile */
+    font-size: clamp(18px, 4vw, 22px);  /* Auto scales with screen */
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border: none;
+    border-radius: 50px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+    z-index: 1000;
+    transition: all 0.35s ease;
+    min-width: 280px;                   /* Minimum width for small phones */
+}
+
+/* Hover & Tap Effects (desktop + mobile) */
+#form:hover,
+#form:active {
+    background: linear-gradient(135deg, #218838, #1daa8a);
+    transform: translateX(-50%) translateY(-6px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+/* Pressed effect */
+#form:active {
+    transform: translateX(-50%) translateY(-2px);
+}
+
+/* Arrow icon */
+#form::after {
+    content: " ➤";
+    margin-left: 10px;
+    font-size: 24px;
+}
+
+/* Extra small phones – even better touch target */
+@media (max-width: 380px) {
+    #form {
+        padding: 18px 40px;
+        font-size: 19px;
+        min-width: 90vw;
+        bottom: 30px;
+    }
+}
+
+/* Tablets & larger – slightly bigger */
+@media (min-width: 768px) {
+    #form {
+        padding: 18px 60px;
+        font-size: 24px;
+        bottom: 50px;
+    }
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KisanBandhu - Get Started</title>
+  <link rel="stylesheet" href="form.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Hind+Siliguri&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>Welcome, Farmer Brother</h2>
+    <p>Tell us about yourself – we’re here for your crops</p>
+
+    <form>
+      <input type="text" placeholder="Your Full Name" required />
+      <input type="tel" placeholder="Mobile Number" required />
+      <input type="text" placeholder="Village Name" required />
+
+      <select required>
+        <option value="" disabled selected>Select Main Crop</option>
+        <option>Wheat</option>
+        <option>Rice</option>
+        <option>Cotton</option>
+        <option>Sugarcane</option>
+        <option>Tomato</option>
+        <option>Potato</option>
+        <option>Maize</option>
+        <option>Soybean</option>
+      </select>
+
+      <select required>
+        <option value="" disabled selected>Select Your State</option>
+        <option>Maharashtra</option>
+        <option>Gujarat</option>
+        <option>Punjab</option>
+        <option>Uttar Pradesh</option>
+        <option>Madhya Pradesh</option>
+        <option>Rajasthan</option>
+        <option>Haryana</option>
+        <option>Bihar</option>
+        <option>Karnataka</option>
+      </select>
+
+      <!-- Modern Submit Button -->
+      <button onclick="location.href='select.html'" type="submit" class="submit-btn" >
+        Continue
+      </button>
+    </form>
+  </div>
+
+</body>
+</html>
