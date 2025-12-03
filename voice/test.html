@@ -1,49 +1,175 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>KisanBandhu – Final</title>
-<style>
-  body{font-family:Arial;text-align:center;padding:60px;background:#e8f5e9}
-  button{padding:40px 80px;font-size:30px;background:#4CAF50;color:white;border-radius:50%;border:none;cursor:pointer}
-  button:active{background:#d32f2f}
-  #log{margin-top:40px;font-size:26px;min-height:60px}
-</style></head>
+<html lang="hi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>किसानबन्धु – वॉइस असिस्टेंट</title>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Hind Siliguri', sans-serif;
+      background: linear-gradient(135deg, #0f5132, #146c43);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .subtitle {
+      font-size: 20px;
+      opacity: 0.9;
+      margin-bottom: 50px;
+      font-weight: 500;
+    }
+
+    /* Modern Mic Button – Farmer-Friendly */
+    #mic {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #28a745, #20c997);
+      border: none;
+      font-size: 28px;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 15px 35px rgba(40, 167, 69, 0.5),
+                  inset 0 -8px 15px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #mic::before {
+      content: "🎤";
+      font-size: 70px;
+      display: block;
+    }
+
+    #mic:active {
+      transform: scale(0.92);
+      background: linear-gradient(145deg, #dc3545, #c82333);
+      box-shadow: 0 8px 20px rgba(220, 53, 69, 0.6);
+    }
+
+    /* Pulsing animation when recording */
+    #mic.recording {
+      animation: pulse 1.5s infinite;
+      background: linear-gradient(145deg, #dc3545, #e74c3c);
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+      70% { box-shadow: 0 0 0 30px rgba(220, 53, 69, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+    }
+
+    /* Status Log – Beautiful Chat Style */
+    #log {
+      margin-top: 60px;
+      padding: 20px 30px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      min-height: 80px;
+      font-size: 24px;
+      font-weight: 500;
+      width: 90%;
+      max-width: 500px;
+      border: 2px solid rgba(255,255,255,0.2);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      transition: all 0.4s ease;
+    }
+
+    .user { color: #a8e6cf; }
+    .bot  { color: #fff3cd; font-weight: 600; }
+
+    /* Responsive for small phones */
+    @media (max-width: 480px) {
+      h1 { font-size: 30px; }
+      .subtitle { font-size: 18px; }
+      #mic { width: 160px; height: 160px; font-size: 24px; }
+      #mic::before { font-size: 60px; }
+      #log { font-size: 20px; padding: 18px; }
+    }
+  </style>
+</head>
 <body>
-<h1>किसानबन्धु वॉइस असिस्टेंट</h1>
-<button id="mic">Hold & Speak in Hindi</button>
-<div id="log">Connecting...</div>
 
-<script>
-const log = document.getElementById("log");
-const ws = new WebSocket("ws://127.0.0.1:8000/");
+  <h1>किसानबन्धु वॉइस असिस्टेंट</h1>
+  <p class="subtitle">हिंदी में बोलें – हम आपकी भाषा समझते हैं</p>
 
-ws.onopen = () => log.innerHTML = "<span style='color:green'>जुड़ गया! बटन दबाकर बोलें</span>";
-ws.onclose = () => log.innerHTML = "<span style='color:red'>Server बंद है – फिर चालू करें</span>";
+  <button id="mic"></button>
 
-ws.onmessage = (msg) => {
-  if (msg.data.startsWith("TEXT:")) log.innerText = "आप: " + msg.data.slice(5);
-  if (msg.data.startsWith("BOT:"))  log.innerText = "किसानबन्धु: " + msg.data.slice(4);
-  if (msg.data.startsWith("AUDIO:")) {
-    const audio = new Audio("data:audio/mpeg;base64," + msg.data.slice(6));
-    audio.volume = 1.0;
-    audio.play();
-    log.innerText = "बोल रहा हूँ...";
-  }
-};
+  <div id="log">जुड़ रहा हूँ... एक सेकंड</div>
 
-let recorder;
-document.getElementById("mic").onpointerdown = async () => {
-  const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-  recorder = new MediaRecorder(stream);
-  const chunks = [];
-  recorder.ondataavailable = e => chunks.push(e.data);
-  recorder.onstop = () => {
-    const blob = new Blob(chunks, {type:'audio/webm'});
-    const reader = new FileReader();
-    reader.onload = () => ws.send(reader.result.split(',')[1]);
-    reader.readAsDataURL(blob);
-  };
-  recorder.start();
-  log.innerText = "बोलिए... (छोड़ें जब खत्म हो)";
-};
-document.getElementById("mic").onpointerup = () => recorder && recorder.stop();
-</script>
-</body></html>
+  <script>
+    const log = document.getElementById("log");
+    const micBtn = document.getElementById("mic");
+    const ws = new WebSocket("ws://127.0.0.1:8000/");
+
+    ws.onopen = () => {
+      log.innerHTML = "<span style='color:#a8e6cf'>जुड़ गया! बटन दबाकर बोलें</span>";
+    };
+
+    ws.onclose = () => {
+      log.innerHTML = "<span style='color:#ff6b6b'>कनेक्शन टूट गया – सर्वर चालू करें</span>";
+    };
+
+    ws.onmessage = (msg) => {
+      if (msg.data.startsWith("TEXT:")) {
+        log.innerHTML = `<span class="user">आप: ${msg.data.slice(5)}</span>`;
+      }
+      if (msg.data.startsWith("BOT:")) {
+        log.innerHTML = `<span class="bot">किसानबन्धु: ${msg.data.slice(4)}</span>`;
+      }
+      if (msg.data.startsWith("AUDIO:")) {
+        const audio = new Audio("data:audio/mpeg;base64," + msg.data.slice(6));
+        audio.volume = 1.0;
+        audio.play();
+        log.innerHTML = "<span style='color:#fff3cd'>बोल रहा हूँ...</span>";
+      }
+    };
+
+    let recorder;
+    micBtn.onpointerdown = async () => {
+      micBtn.classList.add("recording");
+      log.innerHTML = "<span style='color:#ff6b6b'>बोलिए... (छोड़ें जब खत्म हो)</span>";
+      const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+      recorder = new MediaRecorder(stream);
+      const chunks = [];
+      recorder.ondataavailable = e => chunks.push(e.data);
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, {type: 'audio/webm'});
+        const reader = new FileReader();
+        reader.onload = () => ws.send(reader.result.split(',')[1]);
+        reader.readAsDataURL(blob);
+      };
+      recorder.start();
+    };
+
+    micBtn.onpointerup = micBtn.onpointerleave = () => {
+      if (recorder && recorder.state === "recording") {
+        recorder.stop();
+        micBtn.classList.remove("recording");
+      }
+    };
+  </script>
+
+</body>
+</html>

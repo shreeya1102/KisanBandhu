@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>किसानबन्धु – दवाई मंडी</title>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Hind Siliguri', sans-serif;
+      background: linear-gradient(135deg, #0f5132, #146c43);
+      color: white;
+      min-height: 100vh;
+      padding: 20px 10px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; text-align: center; }
+    h1 { font-size: 34px; font-weight: 700; margin-bottom: 8px; }
+    .subtitle { font-size: 18px; opacity: 0.9; margin-bottom: 25px; }
+
+    .search-bar {
+      width: 100%; max-width: 520px; padding: 14px 20px; font-size: 18px;
+      border-radius: 50px; border: none; margin: 0 auto 25px; display: block;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+
+    .tabs { display: flex; justify-content: center; gap: 12px; margin-bottom: 30px; flex-wrap: wrap; }
+    .tab { padding: 10px 24px; background: rgba(255,255,255,0.15); border-radius: 50px;
+           font-size: 17px; font-weight: 600; cursor: pointer; transition: 0.3s; backdrop-filter: blur(8px); }
+    .tab.active, .tab:hover { background: #28a745; }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .product-card {
+      background: white; color: #0f5132; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25); transition: 0.3s;
+      display: flex; flex-direction: column;
+    }
+    .product-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(0,0,0,0.35); }
+
+    .product-img {
+      height: 90px; background: #e9f7ef; display: flex; align-items: center;
+      justify-content: center; font-size: 32px; color: #28a745; overflow: hidden;
+    }
+    .product-img img {
+      max-width: 100%; max-height: 100%; object-fit: cover;
+    }
+    .product-info { padding: 12px; flex-grow: 1; text-align: left; }
+    .product-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .product-for { font-size: 12px; color: #28a745; font-weight: 600; line-height: 1.3; }
+    .price { font-size: 17px; font-weight: 700; color: #198754; margin-top: 6px; }
+    .btn-buy {
+      padding: 10px; background: linear-gradient(135deg, #28a745, #20c997);
+      color: white; border: none; font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+    .btn-buy:hover { background: linear-gradient(135deg, #218838, #1da88a); }
+
+    @media (max-width: 992px) { .products-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .products-grid { grid-template-columns: 1fr; } h1 { font-size: 30px; } }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>दवाई मंडी</h1>
+    <p class="subtitle">फसल और पशु की सभी दवाइयाँ – एक क्लिक में</p>
+
+    <input type="text" class="search-bar" id="searchInput" placeholder="दवाई या बीमारी सर्च करें...">
+
+    <div class="tabs">
+      <div class="tab active" data-filter="all">सभी</div>
+      <div class="tab" data-filter="crop">फसल की दवाई</div>
+      <div class="tab" data-filter="animal">पशु की दवाई</div>
+    </div>
+
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+
+  <script>
+    const medicines = [
+      { name: "बाविस्टिन", for: "फफूंद रोग (गेहूँ, चावल)", type: "crop", price: "₹280", link: "https://www.amazon.in/s?k=Bavistin" },
+      { name: "रिडोमिल गोल्ड", for: "अगेती/पछेती झुलसा (आलू, टमाटर)", type: "crop", price: "₹520", link: "https://www.amazon.in/s?k=Ridomil+Gold" },
+      { name: "साफ फंगीसाइड", for: "पाउडरी मिल्ड्यू (अंगूर, मिर्च)", type: "crop", price: "₹380", link: "https://www.amazon.in/s?k=Clean+Fungicide" },
+      { name: "कॉन्टाफ प्लस", for: "शीथ ब्लाइट (धान)", type: "crop", price: "₹460", link: "https://www.amazon.in/Syngenta-syngenta-Isabion-100-ml/dp/B08RY6L5B9" },
+      { name: "ट्राइकोडर्मा", for: "जड़ सड़न (सभी फसलें)", type: "crop", price: "₹180", link: "https://www.amazon.in/s?k=Trichoderma" },
+      { name: "ऑक्सीप्लस", for: "गाय-भैंस का बुखार", type: "animal", price: "₹420", link: "https://www.amazon.in/s?k=Oxyplus" },
+      { name: "एफएमडी वैक्सीन", for: "मुँहपका-खुरपका", type: "animal", price: "₹850", link: "https://www.amazon.in/s?k=FMD+Vaccine" },
+      { name: "लम्पी वैक्सीन", for: "लम्पी स्किन रोग", type: "animal", price: "₹1200", link: "https://www.amazon.in/s?k=Lumpy+Vaccine" },
+      { name: "अम्प्रोलियम", for: "कोक्सीडियोसिस (मुर्गी)", type: "animal", price: "₹320", link: "https://www.amazon.in/s?k=Amprolium" },
+      { name: "एनरोफ्लॉक्सासिन", for: "बैक्टीरियल संक्रमण (मुर्गी)", type: "animal", price: "₹380", link: "https://www.amazon.in/s?k=Enrofloxacin" },
+    ];
+
+    const grid = document.getElementById("productsGrid");
+    const searchInput = document.getElementById("searchInput");
+    const tabs = document.querySelectorAll(".tab");
+
+    // Image mapping for medicines
+    const medicineImages = {
+      "बाविस्टिन": "images/Bavistin.jpg",
+      "रिडोमिल गोल्ड": "images/ridomil_gold.jpg",
+      "साफ फंगीसाइड": "images/clean_genie.jpg",
+      "कॉन्टाफ प्लस": "images/contaf_plus.jpg",
+      "ट्राइकोडर्मा": "images/Trichoderma.webp",
+      "ऑक्सीप्लस": "images/oxyplus.jpeg",
+      "एफएमडी वैक्सीन": "images/fmd_vaccine.jpeg",
+      "लम्पी वैक्सीन": "images/lumpy_vaccine.jpeg",
+      "अम्प्रोलियम": "images/amprolium.jpg",
+      "एनरोफ्लॉक्सासिन": "images/enrofloxacins.webp"
+    };
+
+    function render(filter = "all", query = "") {
+      grid.innerHTML = "";
+      const q = query.toLowerCase().trim();
+
+      medicines
+        .filter(m => (filter === "all" || m.type === filter) && 
+                     (m.name.toLowerCase().includes(q) || m.for.toLowerCase().includes(q)))
+        .sort((a, b) => {
+          const aExact = a.name.toLowerCase() === q ? 0 : 1;
+          const bExact = b.name.toLowerCase() === q ? 0 : 1;
+          if (aExact !== bExact) return aExact - bExact;
+          return a.name.localeCompare(b.name);
+        })
+        .forEach(m => {
+          const card = document.createElement("div");
+          card.className = "product-card";
+          const imgSrc = medicineImages[m.name] || "images/photo.png";
+          card.innerHTML = `
+            <div class="product-img"><img src="${imgSrc}" alt="${m.name}" /></div>
+            <div class="product-info">
+              <div class="product-name">${m.name}</div>
+              <div class="product-for">${m.for}</div>
+              <div class="price">${m.price}</div>
+            </div>
+            <button class="btn-buy" onclick="window.open('${m.link}', '_blank')">
+              अभी खरीदें
+            </button>
+          `;
+          grid.appendChild(card);
+        });
+    }
+
+    render(); // पहली बार दिखाने के लिए
+
+    tabs.forEach(t => t.addEventListener("click", () => {
+      tabs.forEach(x => x.classList.remove("active"));
+      t.classList.add("active");
+      render(t.dataset.filter, searchInput.value);
+    }));
+
+    searchInput.addEventListener("input", () => {
+      const active = document.querySelector(".tab.active").dataset.filter;
+      render(active, searchInput.value);
+    });
+  </script>
+
+</body>
+</html>
